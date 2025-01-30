@@ -4,13 +4,18 @@ FROM ubuntu:latest
 # Set non-interactive mode to avoid prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install XFCE desktop, VNC server, noVNC, and NetworkManager (optional)
+# Install XFCE desktop, VNC server, noVNC, NetworkManager (optional), and Google Chrome
 RUN apt update && apt install -y \
     xfce4 xfce4-goodies \
     tightvncserver x11vnc \
     novnc websockify curl wget \
     dbus-x11 xfonts-base \
-    network-manager # Optional, if you need networking
+    network-manager \
+    # Install Google Chrome
+    apt-transport-https ca-certificates curl software-properties-common gnupg2 && \
+    curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list && \
+    apt update && apt install -y google-chrome-stable
 
 # Create a user (replace 'myuser' with your desired username)
 RUN useradd -ms /bin/bash myuser
