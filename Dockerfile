@@ -4,14 +4,22 @@ FROM ubuntu:latest
 # Set non-interactive mode to avoid prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install XFCE desktop, VNC server, and noVNC
+# Install XFCE desktop, VNC server, noVNC, and NetworkManager (optional)
 RUN apt update && apt install -y \
     xfce4 xfce4-goodies \
     tightvncserver x11vnc \
     novnc websockify curl wget \
-    dbus-x11 xfonts-base
+    dbus-x11 xfonts-base \
+    network-manager # Optional, if you need networking
 
-# Set up VNC server password
+# Create a user (replace 'myuser' with your desired username)
+RUN useradd -ms /bin/bash myuser
+
+# Set the USER environment variable
+ENV USER=myuser
+
+# Set up VNC server password for the new user
+USER myuser
 RUN mkdir -p ~/.vnc && \
     echo "password" | vncpasswd -f > ~/.vnc/passwd && \
     chmod 600 ~/.vnc/passwd
